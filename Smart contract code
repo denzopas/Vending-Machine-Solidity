@@ -1,0 +1,37 @@
+//SPDX-License-Identifier:MIT
+pragma solidity ^0.8.11;
+contract VendingMachine{
+
+    //state variables
+    address public owner;
+    mapping (address=>uint) public CokeBalances;
+
+    //owner deploys the contract
+    //vending machine balance=200
+
+    constructor(){
+        owner=msg.sender;
+        CokeBalances[address(this)]=200;
+
+    }
+
+    function balanceVendingMachine() public view returns(uint){
+        return CokeBalances[address(this)];
+    }
+    //owner restoks the vending machine with cokes
+
+    function restock(uint amount) public{
+        require(msg.sender==owner,"Only the owner can restock");
+        CokeBalances[address(this)]+=amount;
+
+    }
+
+    //Buy coke from the vending machine
+
+    function buy(uint amount) public payable{
+        require(msg.value>= amount*1 ether,"Must pay atleast 1 ether per coke");
+        require(CokeBalances[address(this)]>=amount,"Not enough coke in the vending machine");
+        CokeBalances[address(this)]-=amount;
+        CokeBalances[msg.sender]+=amount;
+    }
+}
